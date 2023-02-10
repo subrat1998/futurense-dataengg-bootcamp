@@ -1,0 +1,25 @@
+UNIX CMD
+--------
+
+whoami - shows current logged user name
+date   - current date
+pwd	 - present working directory
+cd	 - To change directory
+ls     - shows list of files and directories
+         ls -l
+	   ls -al
+man    - show details and usage of cmd
+touch  -To create empty file
+cat    - To read the file
+clear  - To clear the screen
+ls     - To create a directory
+chmod	 - To change permission mode
+Nano,Vi,Vim  - To write in file
+history - To get all executed cmd
+head - To get 1st few line
+tail - To get last few line
+echo - To print
+
+[Owner][group][other]
+  r       w     x
+  1       2     4
