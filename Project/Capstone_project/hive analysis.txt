@@ -1,0 +1,63 @@
+MySQL CLI:
+----------
+
+Create table disney_hotstar(title varchar(90),yr int,director varchar(40),awards varchar(60),votes int,release_year int,Total_win int,Total_Nominated int);
+
+LOAD DATA INFILE '/home/cloudera/Desktop/disney_processed_file.csv'
+INTO TABLE disney_hotstar
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES; 
+
+Linux CLI:
+----------
+
+sqoop import \
+--connect jdbc:mysql://localhost/ott_platform \
+--username root \
+--password cloudera \
+--table disney_hotstar \
+--hive-import \
+--hive-overwrite \
+--create-hive-table \
+--hive-table disney_hotstar \
+--m-1;
+
+
+HIVE CLI:
+---------
+
+Analysis:
+---------
+
+1)
+select d1.director, d1.yr, d1.votes from disney_hotstar d1 
+join (SELECT d2.director as director, MAX(d2.votes) AS max_votes FROM disney_hotstar d2 GROUP BY d2.director order by max_votes desc limit 1) t2 
+on d1.director = t2.director 
+order by d1.votes desc 
+limit 1;
+
+
+2)
+select director as director, count(title) as movie_cnt
+from disney_hotstar 
+where release_year = 1999 and director != 'N/A'
+group by director
+
+3)
+select d2.director 
+from disney_hotstar d2 
+    join (
+        select d1.title as title, d1.yr, count(d1.awards) as awards_count
+        from disney_hotstar d1
+        where d1.awards != 'N/A' and d1.title != 'N/A' and d1.title != 'null'
+        group by d1.title ,d1.yr
+        order by awards_count desc
+        limit 1
+    ) subq
+on d2.title = subq.title
+where d2.director != 'N/A';
+
+4)
+select count(title) as award_nominated_movie_cnt from disney_hotstar where yr between 1998 and 2018 and awards != 'N/A';
